@@ -59,14 +59,16 @@ void init(void);
 
 // Função de inicialização do uC
 void init(void){
+	
 	// Initialize the board clock
 	sysclk_init();
+	
 	// Inicializa PIO do botao
 	pmc_enable_periph_clk(BUT_PIO_ID);
+	
 	// configura pino ligado ao botão como entrada com um pull-up.
 	pio_set_input(PIOA, BUT_PIO_IDX_MASK, PIO_DEFAULT);
 	pio_pull_up(PIOA, BUT_PIO_IDX_MASK, PIO_PULLUP);
-
 
 	// Desativa WatchDog Timer
 	WDT->WDT_MR = WDT_MR_WDDIS;
@@ -92,10 +94,21 @@ int main(void)
   // aplicacoes embarcadas não devem sair do while(1).
   while (1)
   {
-	  pio_set(PIOC, LED_PIO_IDX_MASK);      // Coloca 1 no pino LED
-	  delay_ms(1000);                        // Delay por software de 1000 ms
-	  pio_clear(PIOC, LED_PIO_IDX_MASK);    // Coloca 0 no pino do LED
-	  delay_ms(3000);                        // Delay por software de 3000 ms
-  }
+	  //pio_set(PIOC, LED_PIO_IDX_MASK);      // Coloca 1 no pino LED
+	  //delay_ms(1000);                       / / Delay por software de 1000 ms
+	  //pio_clear(PIOC, LED_PIO_IDX_MASK);    // Coloca 0 no pino do LED
+	  //delay_ms(3000);                        // Delay por software de 3000 ms
+	  
+	  if(!pio_get(BUT_PIO, PIO_INPUT, BUT_PIO_IDX_MASK)){
+		  for (int i = 0; i<10; i++){
+			  pio_clear(PIOC, LED_PIO_IDX_MASK);
+			  delay_ms(100);  
+			  pio_set(PIOC, LED_PIO_IDX_MASK);
+			  delay_ms(100);
+			}
+	  } else {
+		  pio_set(LED_PIO, LED_PIO_IDX_MASK);
+	  }
+	 }
   return 0;
 }
