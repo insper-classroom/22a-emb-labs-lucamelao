@@ -16,9 +16,7 @@
 /************************************************************************/
 /* includes                                                             */
 /************************************************************************/
-
 #include "asf.h"
-
 /************************************************************************/
 /* defines                                                              */
 /************************************************************************/
@@ -89,9 +87,14 @@
 /************************************************************************/
 /* prototypes                                                           */
 /************************************************************************/
-
 void init(void);
-
+void _pio_set(Pio *p_pio, const uint32_t ul_mask);
+void _pio_clear(Pio *p_pio, const uint32_t ul_mask);
+void _pio_pull_up(Pio *p_pio, const uint32_t ul_mask, const uint32_t ul_pull_up_enable);
+void _pio_set_input(Pio *p_pio, const uint32_t ul_mask, const uint32_t ul_attribute);
+void _pio_set_output(Pio *p_pio, const uint32_t ul_mask, const uint32_t ul_default_level, const uint32_t ul_multidrive_enable, const uint32_t ul_pull_up_enable);
+uint32_t _pio_get(Pio *p_pio, const pio_type_t ul_type, const uint32_t ul_mask);
+void _delay_ms(uint32_t time);
 /************************************************************************/
 /* interrupcoes                                                         */
 /************************************************************************/
@@ -136,6 +139,34 @@ void _pio_set_output(Pio *p_pio, const uint32_t ul_mask, const uint32_t ul_defau
 	_pio_clear(p_pio, ul_default_level); //clear
 	p_pio -> PIO_MDER = ul_multidrive_enable; // ativação do multidrive
 	_pio_pull_up(p_pio, ul_mask, ul_pull_up_enable); // ativação do pull-up
+}
+
+uint32_t _pio_get(Pio *p_pio, const pio_type_t ul_type, const uint32_t ul_mask)
+{
+	{
+		uint32_t estado;
+
+		if (ul_type == PIO_OUTPUT_0) {
+			estado = p_pio->PIO_ODSR;
+			} else {
+			estado = p_pio->PIO_PDSR;
+		}
+
+		if ((estado & ul_mask) == 0) {
+			return 0;
+			} else {
+			return 1;
+		}
+	}	
+}
+
+void _delay_ms(uint32_t time)
+{
+	uint32_t timer = 0;
+	while(timer < time*150000){
+		asm("nop");
+		timer++;
+	}	
 }
 
 /************************************************************************/
@@ -188,46 +219,46 @@ int main(void)
   // aplicacoes embarcadas não devem sair do while(1).
   while (1)
   {  
-	 if(!pio_get(BUT_PIO, PIO_INPUT, BUT_PIO_IDX_MASK)){
+	 if(!_pio_get(BUT_PIO, PIO_INPUT, BUT_PIO_IDX_MASK)){
 		  for (int i = 0; i<10; i++){
 			  _pio_clear(PIOC, LED_PIO_IDX_MASK);
-			  delay_ms(100);
+			  _delay_ms(100);
 			  _pio_set(PIOC, LED_PIO_IDX_MASK);
-			  delay_ms(100);
+			  _delay_ms(100);
 		  }
 		  } else {
 		  _pio_set(LED_PIO, LED_PIO_IDX_MASK);
 	  }  
-	  if(!pio_get(BUT_PIO1, PIO_INPUT, BUT_PIO_IDX_MASK1)){
+	  if(!_pio_get(BUT_PIO1, PIO_INPUT, BUT_PIO_IDX_MASK1)){
 		  for (int i = 0; i<10; i++){
 			  _pio_clear(PIOA, LED_PIO_IDX_MASK1);
-			  delay_ms(100);  
+			  _delay_ms(100);  
 			  _pio_set(PIOA, LED_PIO_IDX_MASK1);
-			  delay_ms(100);
+			  _delay_ms(100);
 			}
 	  } else {
 		  _pio_set(LED_PIO1, LED_PIO_IDX_MASK1);
 	  }
 	  
 	  
-	   if(!pio_get(BUT_PIO2, PIO_INPUT, BUT_PIO_IDX_MASK2)){
+	   if(!_pio_get(BUT_PIO2, PIO_INPUT, BUT_PIO_IDX_MASK2)){
 		   for (int i = 0; i<10; i++){
 			   _pio_clear(PIOC, LED_PIO_IDX_MASK2);
-			   delay_ms(100);
+			   _delay_ms(100);
 			   _pio_set(PIOC, LED_PIO_IDX_MASK2);
-			   delay_ms(100);
+			   _delay_ms(100);
 		   }
 		   } else {
 		   _pio_set(LED_PIO2, LED_PIO_IDX_MASK2);
 	   }
 	   
 	   
-	    if(!pio_get(BUT_PIO3, PIO_INPUT, BUT_PIO_IDX_MASK3)){
+	    if(!_pio_get(BUT_PIO3, PIO_INPUT, BUT_PIO_IDX_MASK3)){
 		    for (int i = 0; i<10; i++){
 			    _pio_clear(PIOB, LED_PIO_IDX_MASK3);
-			    delay_ms(100);
+			    _delay_ms(100);
 			    _pio_set(PIOB, LED_PIO_IDX_MASK3);
-			    delay_ms(100);
+			    _delay_ms(100);
 		    }
 		    } else {
 		    _pio_set(LED_PIO3, LED_PIO_IDX_MASK3);
