@@ -56,16 +56,21 @@ void io_init(void);
 
 void pisca_led(int tempo, int freq){
 	if(freq>0){
-		long T = 500/freq;
 		int n = tempo*freq;
+		long T = 500/freq;
 		for (int i=0;i<n;i++){
 			pio_clear(LED_PIO2, LED_IDX_MASK2);
 			delay_ms(T);
 			pio_set(LED_PIO2, LED_IDX_MASK2);
 			delay_ms(T);
-		}
+			gfx_mono_draw_rect(i, 5, 5, 10, GFX_PIXEL_SET);
+			}
+		for (int i=0;i<n;i++){
+			gfx_mono_draw_rect(i, 5, 5, 10, GFX_PIXEL_CLR);
+			}
 	}
 }
+
 void but_callBack(void){
 	if (!pio_get(BUT_PIO, PIO_INPUT, BUT_IDX_MASK)){  // na hora que pressiona
 			but_flag = 1;
@@ -149,7 +154,7 @@ int main (void)
 	/* Insert application code here, after the board has been initialized. */
 	while(1) {
 		if (but_flag) {
-			delay_ms(400);
+			delay_ms(600);
 			if(but_flag){
 				delay -= 1; // APERTO LONGO
 				}
