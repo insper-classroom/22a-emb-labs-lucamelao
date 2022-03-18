@@ -207,6 +207,17 @@ void TC2_Handler(void) {
 	pin_toggle(LED_PIO1, LED_IDX_MASK1);
 }
 
+void TC0_Handler(void) {
+	/**
+	* Devemos indicar ao TC que a interrupção foi satisfeita.
+	* Isso é realizado pela leitura do status do periférico
+	**/
+	volatile uint32_t status = tc_get_status(TC0, 0);
+
+	/** Muda o estado do LED (pisca) **/
+	pin_toggle(LED_PIO3, LED_IDX_MASK3);
+}
+
 void RTT_Handler(void) {
 	uint32_t ul_status;
 
@@ -290,6 +301,8 @@ int main (void)
 	TC_init(TC0, ID_TC2, 2, 8);
 	tc_start(TC0, 2);
 	
+	TC_init(TC0, ID_TC0, 0, 4);
+	
 	RTT_init(4, 16, RTT_MR_ALMIEN); 
 	
 	/** Configura RTC */
@@ -298,7 +311,7 @@ int main (void)
 
 	while(1) {
 		if(flag_rtc_alarm){
-			pisca_led(5, 200);
+			tc_start(TC0, 0);
 			flag_rtc_alarm = 0;
 		}
 		if(but1_flag){
