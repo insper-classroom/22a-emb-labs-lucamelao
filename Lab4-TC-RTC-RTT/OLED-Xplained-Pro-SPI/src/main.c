@@ -1,5 +1,4 @@
 #include <asf.h>
-
 #include "gfx_mono_ug_2832hsweg04.h"
 #include "gfx_mono_text.h"
 #include "sysfont.h"
@@ -47,18 +46,15 @@ typedef struct  {
 void LED_init(int estado);
 void TC_init(Tc * TC, int ID_TC, int TC_CHANNEL, int freq);
 void pin_toggle(Pio *pio, uint32_t mask);
-
 void RTC_init(Rtc *rtc, uint32_t id_rtc, calendar t, uint32_t irq_type);
 void pisca_led(int n, int t);
-
 void but_callBack(void);
-
 /************************************************************************/
 /* VAR globais                                                          */
 /************************************************************************/
 volatile char flag_rtc_alarm = 0;
 volatile char but1_flag = 0;
-
+volatile char count_flag = 0;
 /************************************************************************/
 /* INITS                                                          */
 /************************************************************************/
@@ -177,6 +173,15 @@ void set_alarm_but1() {
 	rtc_set_time_alarm(RTC, 1, current_hour, 1, current_min, 1, current_sec + 20);
 }
 
+void set_time() {
+	gfx_mono_draw_string("        ", 5, 16, &sysfont);
+	char str[15];
+	uint32_t current_hour, current_min, current_sec;
+	rtc_get_time(RTC, &current_hour, &current_min, &current_sec);
+	sprintf(str, "%d:%d:%d", current_hour,current_min,current_sec);
+	gfx_mono_draw_string(str, 5, 16, &sysfont);
+}
+
 /************************************************************************/
 /* HANDLERS                                                          */
 /************************************************************************/
@@ -232,6 +237,7 @@ void RTC_Handler(void) {
 	/* seccond tick */
 	if ((ul_status & RTC_SR_SEC) == RTC_SR_SEC) {
 		// o código para irq de segundo vem aqui
+		count_flag = 1;
 	}
 	rtc_clear_status(RTC, RTC_SCCR_SECCLR);
 	rtc_clear_status(RTC, RTC_SCCR_ALRCLR);
@@ -298,6 +304,10 @@ int main (void)
 		if(but1_flag){
 			set_alarm_but1();
 			but1_flag = 0;
+		}
+		if (count_flag) {
+			set_time();
+			count_flag = 0;
 		}
 	pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
 	}
