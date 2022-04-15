@@ -39,7 +39,7 @@ volatile uint32_t rtt_time = 0;
 void echo_callback(void)
 {
 	if (pio_get(ECHO_PIO, PIO_INPUT, ECHO_IDX_MASK)) {
-		// RTT funciona apenas como um relógio
+		// RTT funciona apenas como um relï¿½gio
 		RTT_init(frequencia_RTT, 0, 0);
 		} else {
 		echo_flag = 1;
@@ -120,17 +120,25 @@ int main (void)
 		}
 		   
 		if (echo_flag) {
-			// Cálculo da distância usando o valor do RTT
-			// Distância = [Tempo ECHO em nível alto * Velocidade do Som]/2
+			// Cï¿½lculo da distï¿½ncia usando o valor do RTT
+			// Distï¿½ncia = [Tempo ECHO em nï¿½vel alto * Velocidade do Som]/2
 			distancia = rtt_time * VELOCIDADE_SOM * 100 / (frequencia_RTT*2);
 			
 			// Apaga o que tiver no OLED
 			limpa_oled();
 			
-			// Confere se está no range de leitura
+			// Confere se estÃ¡ no range de leitura
 			if (distancia > 2.0 && distancia < 400.0) {
 				sprintf(str, "%0.1f cm", distancia);
 				gfx_mono_draw_string(str, 0, 0, &sysfont);
+				// GrÃ¡fico
+				if (scan == 0) {
+					for (int i = 0; i < X_MAXIMO; i++){
+					gfx_mono_draw_rect(0, 16, i, 16, GFX_PIXEL_CLR);
+					}
+				}
+				gfx_mono_draw_rect(scan*8, 16*(2 - distancia/400), 8, 16*(distancia/400), GFX_PIXEL_SET);
+				scan = (scan + 1)%16;
 			} 
 			else {
 				gfx_mono_draw_string("Range Error", 0, 0, &sysfont);
