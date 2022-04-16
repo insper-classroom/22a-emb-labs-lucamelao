@@ -2757,7 +2757,7 @@ int main (void)
 			// Apaga o que tiver no OLED
 			limpa_oled();
 			
-						// Confere se está no range de leitura
+			// Confere se está no range de leitura
 			if (distancia > 2.0 && distancia < 400.0) {
   401906:	eddf 8a50 	vldr	s17, [pc, #320]	; 401a48 <main+0x164>
   40190a:	e011      	b.n	401930 <main+0x4c>
