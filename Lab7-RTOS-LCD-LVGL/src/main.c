@@ -54,6 +54,60 @@ extern void vApplicationMallocFailedHook(void) {
 /************************************************************************/
 
 static void event_handler(lv_event_t * e) {
+
+	/*
+	este handler sera chamado (pela lv_task_handler) sempre que acontecer 
+	um evento neste widget
+	*/
+	
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		LV_LOG_USER("Clicked");
+	}
+	else if(code == LV_EVENT_VALUE_CHANGED) {
+		LV_LOG_USER("Toggled");
+	}
+}
+
+static void menu_handler(lv_event_t * e) {
+
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		LV_LOG_USER("Clicked");
+	}
+	else if(code == LV_EVENT_VALUE_CHANGED) {
+		LV_LOG_USER("Toggled");
+	}
+}
+
+static void clk_handler(lv_event_t * e) {
+
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		LV_LOG_USER("Clicked");
+	}
+	else if(code == LV_EVENT_VALUE_CHANGED) {
+		LV_LOG_USER("Toggled");
+	}
+}
+
+static void up_handler(lv_event_t * e) {
+
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		LV_LOG_USER("Clicked");
+	}
+	else if(code == LV_EVENT_VALUE_CHANGED) {
+		LV_LOG_USER("Toggled");
+	}
+}
+
+static void down_handler(lv_event_t * e) {
+
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
@@ -68,22 +122,93 @@ void lv_ex_btn_1(void) {
 	lv_obj_t * label;
 
 	lv_obj_t * btn1 = lv_btn_create(lv_scr_act());
-	lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_align(btn1, LV_ALIGN_CENTER, 0, -40);
-
+	lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);  // ADICIONA UM EVENT HANDLER AO BOTAO
+	lv_obj_align(btn1, LV_ALIGN_CENTER, 0, -40);				  // centralizado na tela
+	// cria um label e associa ao botão
 	label = lv_label_create(btn1);
-	lv_label_set_text(label, "Corsi");
 	lv_obj_center(label);
 
 	lv_obj_t * btn2 = lv_btn_create(lv_scr_act());
-	lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(btn2, event_handler, LV_EVENT_ALL, NULL); // ADICIONA UM EVENT HANDLER AO BOTAO
 	lv_obj_align(btn2, LV_ALIGN_CENTER, 0, 40);
 	lv_obj_add_flag(btn2, LV_OBJ_FLAG_CHECKABLE);
 	lv_obj_set_height(btn2, LV_SIZE_CONTENT);
-
 	label = lv_label_create(btn2);
-	lv_label_set_text(label, "Toggle");
 	lv_obj_center(label);
+
+	lv_obj_t * btnMenu = lv_btn_create(lv_scr_act());
+	lv_obj_add_event_cb(btn1, menu_handler, LV_EVENT_ALL, NULL);  // ADICIONA UM EVENT HANDLER AO BOTAO
+	lv_obj_align_to(btnMenu, btn1, LV_ALIGN_OUT_TOP_RIGHT, 0, 0);
+	// cria um label e associa ao botão
+	label = lv_label_create(btnMenu);
+	lv_obj_center(label);
+}
+
+void lv_termostato(void) {
+	static lv_style_t style;
+
+    lv_style_init(&style);
+    lv_style_set_bg_color(&style, lv_color_black());
+	lv_style_set_border_width(&style, 0);
+
+    //lv_style_set_border_color(&style, lv_palette_main(LV_PALETTE_GREEN));
+    //lv_style_set_border_width(&style, 5);
+	
+	// global
+    static lv_obj_t * labelBtn1;
+    static lv_obj_t * labelbtnMenu;
+    static lv_obj_t * labelbtnClock;
+    static lv_obj_t * labelDown;
+    static lv_obj_t * labelUp;
+	/* ----------------------------------------------------------- */
+    lv_obj_t * btn1 = lv_btn_create(lv_scr_act());
+    lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_align(btn1, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+	lv_obj_add_style(btn1, &style, 0);
+
+    labelBtn1 = lv_label_create(btn1);
+	lv_label_set_text(labelBtn1, "[  " LV_SYMBOL_POWER);
+    lv_obj_center(labelBtn1);
+    /* ----------------------------------------------------------- */
+	lv_obj_t * btnMenu = lv_btn_create(lv_scr_act());
+    lv_obj_add_event_cb(btnMenu, menu_handler, LV_EVENT_ALL, NULL);
+	lv_obj_align_to(btnMenu, btn1, LV_ALIGN_OUT_RIGHT_MID, 0, -10);
+	lv_obj_add_style(btn1, &style, 0);
+
+	labelbtnMenu = lv_label_create(btnMenu);
+	lv_label_set_text(labelbtnMenu, " | M |" );
+    lv_obj_center(labelbtnMenu);
+	lv_obj_add_style(btnMenu, &style, 0);
+	/* ----------------------------------------------------------- */
+	lv_obj_t * btnClock = lv_btn_create(lv_scr_act());
+    lv_obj_add_event_cb(btnClock, clk_handler, LV_EVENT_ALL, NULL);
+	lv_obj_align_to(btnClock, btnMenu, LV_ALIGN_OUT_RIGHT_MID, -5, -10);
+	lv_obj_add_style(btnClock, &style, 0);
+
+	labelbtnClock = lv_label_create(btnClock);
+	lv_label_set_text(labelbtnClock, " C ]" );
+    lv_obj_center(labelbtnClock);
+	lv_obj_add_style(btnClock, &style, 0);
+	/* ----------------------------------------------------------- */
+	lv_obj_t * btnUp = lv_btn_create(lv_scr_act());
+	lv_obj_add_event_cb(btnUp, up_handler, LV_EVENT_ALL, NULL);
+	lv_obj_align(btnUp, LV_ALIGN_BOTTOM_LEFT, 210, 0);
+	lv_obj_add_style(btnUp, &style, 0);
+
+	labelUp = lv_label_create(btnUp);
+	lv_label_set_text(labelUp,  "[  " LV_SYMBOL_UP);
+	lv_obj_center(labelUp);
+	/* ----------------------------------------------------------- */
+	lv_obj_t * btnDown = lv_btn_create(lv_scr_act());
+	lv_obj_add_event_cb(btnDown, down_handler, LV_EVENT_ALL, NULL);
+	lv_obj_align(btnDown, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
+	lv_obj_add_style(btnDown, &style, 0);
+	 
+	lv_obj_add_style(btnDown, &style, 0);
+	labelDown = lv_label_create(btnDown);
+	lv_label_set_text(labelDown, "| " LV_SYMBOL_DOWN " ]");
+	lv_obj_center(labelDown);
+
 }
 
 /************************************************************************/
@@ -93,7 +218,7 @@ void lv_ex_btn_1(void) {
 static void task_lcd(void *pvParameters) {
 	int px, py;
 
-	lv_ex_btn_1();
+	lv_termostato();
 
 	for (;;)  {
 		lv_tick_inc(50);
