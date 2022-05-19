@@ -12,6 +12,10 @@
 /* LCD / LVGL                                                           */
 /************************************************************************/
 
+LV_FONT_DECLARE(dseg70);
+LV_FONT_DECLARE(dseg50);
+LV_FONT_DECLARE(dseg20);
+
 #define LV_HOR_RES_MAX          (320)
 #define LV_VER_RES_MAX          (240)
 
@@ -209,7 +213,36 @@ void lv_termostato(void) {
 	lv_label_set_text(labelDown, "| " LV_SYMBOL_DOWN " ]");
 	lv_obj_center(labelDown);
 
+	/* ------------------------- LABELS ------------------------- */
+	
+	// VAR Global qu evai apontar para o label
+	lv_obj_t * labelFloor;
+	lv_obj_t * labelSetValue;
+	lv_obj_t * labelClock;
+
+	labelFloor = lv_label_create(lv_scr_act());
+    lv_obj_align(labelFloor, LV_ALIGN_LEFT_MID, 35 , -45);
+    lv_obj_set_style_text_font(labelFloor, &dseg70, LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(labelFloor, lv_color_white(), LV_STATE_DEFAULT);
+    lv_label_set_text_fmt(labelFloor, "%02d", 23);
+
+
+	labelSetValue = lv_label_create(lv_scr_act());
+    lv_obj_align(labelSetValue, LV_ALIGN_RIGHT_MID, -4 , -50);
+    lv_obj_set_style_text_font(labelSetValue, &dseg50, LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(labelSetValue, lv_color_white(), LV_STATE_DEFAULT);
+    lv_label_set_text_fmt(labelSetValue, "%02d", 23);
+
+	
+	labelClock = lv_label_create(lv_scr_act());
+    lv_obj_align(labelClock, LV_ALIGN_TOP_RIGHT, 0 , 0);
+    lv_obj_set_style_text_font(labelClock, &dseg20, LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(labelClock, lv_color_white(), LV_STATE_DEFAULT);
+	lv_label_set_text_fmt(labelClock, "%02d:%02d", 0, 0);
 }
+
+
+
 
 /************************************************************************/
 /* TASKS                                                                */
