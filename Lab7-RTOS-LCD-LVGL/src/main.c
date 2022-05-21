@@ -281,13 +281,13 @@ void lv_termostato(void) {
 	/* ------------------------- LABELS ------------------------- */
 
 	labelFloor = lv_label_create(lv_scr_act());
-    lv_obj_align(labelFloor, LV_ALIGN_LEFT_MID, 38 , -42);
+    lv_obj_align(labelFloor, LV_ALIGN_LEFT_MID, 38 , -38);
     lv_obj_set_style_text_font(labelFloor, &dseg70, LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(labelFloor, lv_color_white(), LV_STATE_DEFAULT);
     lv_label_set_text_fmt(labelFloor, "%02d", 23);
 	/* ----------------------------------------------------------- */
 	labelSetValue = lv_label_create(lv_scr_act());
-    lv_obj_align(labelSetValue, LV_ALIGN_RIGHT_MID, -4 , -50);
+    lv_obj_align(labelSetValue, LV_ALIGN_RIGHT_MID, -4 , -40);
     lv_obj_set_style_text_font(labelSetValue, &dseg50, LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(labelSetValue, lv_color_white(), LV_STATE_DEFAULT);
     lv_label_set_text_fmt(labelSetValue, "%02d", 23);
@@ -327,11 +327,11 @@ static void task_rtc(void *pvParameters) {
 			rtc_get_time(RTC, &current_hour, &current_min, &current_sec);
 			
 			if (doisPontos == 1){
-				lv_label_set_text_fmt(labelClock, "%02d:%02d", current_hour, current_min);
+				lv_label_set_text_fmt(labelClock, "%02d:%02d:%02d", current_hour, current_min, current_sec);
 				doisPontos = 0;
 			}
 			else if (doisPontos == 0){
-				lv_label_set_text_fmt(labelClock, "%02d %02d", current_hour, current_min);
+				lv_label_set_text_fmt(labelClock, "%02d:%02d:%02d", current_hour, current_min, current_sec);
 				doisPontos = 1;
 			}
 		}
