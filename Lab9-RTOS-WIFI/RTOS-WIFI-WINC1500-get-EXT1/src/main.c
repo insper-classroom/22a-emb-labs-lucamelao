@@ -88,6 +88,11 @@ extern void vApplicationMallocFailedHook(void){
 /* funcoes                                                              */
 /************************************************************************/
 
+void format_get(char *path){
+  sprintf((char *)g_sendBuffer, MAIN_PREFIX_BUFFER, path);
+  send(tcp_client_socket, g_sendBuffer, strlen((char *)g_sendBuffer), 0);
+}
+
 /************************************************************************/
 /* callbacks                                                            */
 /************************************************************************/
@@ -262,8 +267,7 @@ static void task_process(void *pvParameters) {
 
       case GET:
       printf("STATE: GET \n");
-      sprintf((char *)g_sendBuffer, MAIN_PREFIX_BUFFER);
-      send(tcp_client_socket, g_sendBuffer, strlen((char *)g_sendBuffer), 0);
+      format_get("/status");
       state = ACK;
       break;
 
@@ -404,7 +408,7 @@ int main(void)
   pmc_enable_periph_clk(LED_PIO_ID);
 
   pio_configure(LED_PIO, PIO_OUTPUT_0, LED_PIO_IDX_MASK, PIO_DEFAULT);
-  
+
   /* Initialize the UART console. */
   configure_console();
   printf(STRING_HEADER);
